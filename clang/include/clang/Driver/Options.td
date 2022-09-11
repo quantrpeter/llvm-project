@@ -6948,3 +6948,6 @@ def dxc_entrypoint : Option<["--", "/", "-"], "E", KIND_JOINED_OR_SEPARATE>,
                      Group<dxc_Group>,
                      Flags<[DXCOption, NoXarchOption]>,
                      HelpText<"Entry point name">;
+// quantr toolchain
+def quantr : Flag<["-", "--"], "quantr">,
+            Flags<[NoXarchOption]>;
