@@ -40,7 +40,7 @@ namespace Quantr {
 
 class LLVM_LIBRARY_VISIBILITY Linker : public Tool {
 public:
-  Linker(const ToolChain &TC) : Tool("Quantr::Linker", "quantr-link", TC) {}
+  Linker(const ToolChain &TC) : Tool("Quantr::Linker", "linker", TC) {}
 
   bool hasIntegratedCPP() const override { return false; }
 
@@ -55,6 +55,27 @@ private:
                                         const InputInfo &Output,
                                         const llvm::opt::ArgList &Args) const;
 };
+
+
+class LLVM_LIBRARY_VISIBILITY Assembler : public Tool {
+public:
+  Assembler(const ToolChain &TC) : Tool("Quantr::Assembler", "assembler", TC) {}
+
+  bool hasIntegratedCPP() const override { return false; }
+
+  void ConstructJob(Compilation &C, const JobAction &JA,
+                    const InputInfo &Output, const InputInfoList &Inputs,
+                    const llvm::opt::ArgList &TCArgs,
+                    const char *LinkingOutput) const override;
+
+private:
+  void constructLinkAndEmitSpirvCommand(Compilation &C, const JobAction &JA,
+                                        const InputInfoList &Inputs,
+                                        const InputInfo &Output,
+                                        const llvm::opt::ArgList &Args) const;
+};
+
+
 } // namespace Quantr
 
 } // namespace tools

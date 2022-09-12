@@ -24,7 +24,7 @@ QuantrToolChain::~QuantrToolChain() {
 
 auto QuantrToolChain::buildAssembler() const -> Tool * {
   cout << "buildAssembler" << endl;
-  return NULL;
+  return new tools::Quantr::Assembler(*this);
 }
 
 auto QuantrToolChain::buildLinker() const -> Tool * {
@@ -32,10 +32,30 @@ auto QuantrToolChain::buildLinker() const -> Tool * {
   return new tools::Quantr::Linker(*this);
 }
 
+void tools::Quantr::Assembler::constructLinkAndEmitSpirvCommand(
+    Compilation &C, const JobAction &JA, const InputInfoList &Inputs,
+    const InputInfo &Output, const llvm::opt::ArgList &Args) const {
+  cout << "Assembler::constructLinkAndEmitSpirvCommand" << endl;
+}
+
+void tools::Quantr::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
+                                            const InputInfo &Output,
+                                            const InputInfoList &Inputs,
+                                            const ArgList &Args,
+                                            const char *LinkingOutput) const {
+  cout << "Assembler::ConstructJob" << endl;
+  
+  // const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("as"));
+  const char *Exec = Args.MakeArgString("/usr/bin/java");
+  ArgStringList CmdArgs;
+  C.addCommand(std::make_unique<Command>(JA, *this, ResponseFileSupport::None(),
+                                         Exec, CmdArgs, Inputs, Output));
+}
+
 void tools::Quantr::Linker::constructLinkAndEmitSpirvCommand(
     Compilation &C, const JobAction &JA, const InputInfoList &Inputs,
     const InputInfo &Output, const llvm::opt::ArgList &Args) const {
-  cout << "constructLinkAndEmitSpirvCommand" << endl;
+  cout << "Linker::constructLinkAndEmitSpirvCommand" << endl;
 }
 
 void tools::Quantr::Linker::ConstructJob(Compilation &C, const JobAction &JA,
@@ -43,5 +63,5 @@ void tools::Quantr::Linker::ConstructJob(Compilation &C, const JobAction &JA,
                                          const InputInfoList &Inputs,
                                          const ArgList &Args,
                                          const char *LinkingOutput) const {
-  cout << "ConstructJob" << endl;
+  cout << "Linker::ConstructJob" << endl;
 }
