@@ -52,6 +52,7 @@
 #include "ToolChains/WebAssembly.h"
 #include "ToolChains/XCore.h"
 #include "ToolChains/ZOS.h"
+#include "ToolChains/Quantr.h"
 #include "clang/Basic/TargetID.h"
 #include "clang/Basic/Version.h"
 #include "clang/Config/config.h"
@@ -5978,7 +5979,9 @@ const ToolChain &Driver::getToolChain(const ArgList &Args,
         break;
       case llvm::Triple::riscv32:
       case llvm::Triple::riscv64:
-        if (toolchains::RISCVToolChain::hasGCCToolchain(*this, Args))
+        if (Args.hasArg(options::OPT_quantr)){
+          TC = std::make_unique<toolchains::QuantrToolChain>(*this, Target, Args);
+        }else if (toolchains::RISCVToolChain::hasGCCToolchain(*this, Args))
           TC =
               std::make_unique<toolchains::RISCVToolChain>(*this, Target, Args);
         else
