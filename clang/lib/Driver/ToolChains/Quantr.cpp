@@ -14,3 +14,4 @@ QuantrToolChain::QuantrToolChain(const Driver &D, const llvm::Triple &Triple, co
     : ToolChain(D, Triple, Args) {}
 
 QuantrToolChain::~QuantrToolChain() {}
+
