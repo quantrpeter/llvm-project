@@ -46,7 +46,7 @@ void tools::Quantr::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
   cout << "Assembler::ConstructJob" << endl;
   
   // const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("as"));
-  const char *Exec = Args.MakeArgString("/usr/bin/java");
+  const char *Exec = Args.MakeArgString("/usr/bin/java -jar assembler.jar xxxxxx");
   ArgStringList CmdArgs;
   C.addCommand(std::make_unique<Command>(JA, *this, ResponseFileSupport::None(),
                                          Exec, CmdArgs, Inputs, Output));
