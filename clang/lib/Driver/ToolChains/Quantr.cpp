@@ -44,10 +44,36 @@ void tools::Quantr::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
                                             const ArgList &Args,
                                             const char *LinkingOutput) const {
   cout << "Assembler::ConstructJob" << endl;
-  
-  // const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("as"));
-  const char *Exec = Args.MakeArgString("/usr/bin/java -jar assembler.jar xxxxxx");
+  cout << "------------------------------------------------------------------------------------" << endl;
+  cout << "Input " << Inputs[0].getFilename() << endl;
+  FILE *fp=fopen(Inputs[0].getFilename(), "rb");
+  fseek(fp, 0, SEEK_END);
+  long fsize = ftell(fp);
+  cout << "fsize="<<fsize<<endl;
+  fseek(fp, 0, SEEK_SET);
+  char *string = (char *)malloc(fsize + 1);
+  fread(string, fsize, 1, fp);
+  fclose(fp);
+  string[fsize] = 0;
+  cout<<string<<endl;
+  cout << "------------------------------------------------------------------------------------" << endl;
+  cout << "Output " << Output.getFilename() << endl;
+  cout << "------------------------------------------------------------------------------------" << endl;
+  // cout << "LinkingOutput " << LinkingOutput << endl;
+  // cout << "------------------------------------------------------------------------------------" << endl;
+
   ArgStringList CmdArgs;
+
+  // const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("as"));
+  // CmdArgs.push_back("-o");
+  // CmdArgs.push_back(Output.getFilename());
+  // CmdArgs.push_back(Inputs[0].getFilename());
+
+  const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("cat"));
+  CmdArgs.push_back(Inputs[0].getFilename());
+  
+  // const char *Exec =
+      // Args.MakeArgString("/usr/bin/java -jar assembler.jar xxxxxx");
   C.addCommand(std::make_unique<Command>(JA, *this, ResponseFileSupport::None(),
                                          Exec, CmdArgs, Inputs, Output));
 }
