@@ -2069,8 +2069,9 @@ private:
 
     // type[] a in Java
     if (Style.Language == FormatStyle::LK_Java &&
-        PreviousNotConst->is(tok::r_square))
+        PreviousNotConst->is(tok::r_square)) {
       return true;
+    }
 
     // const a = in JavaScript.
     return Style.isJavaScript() && PreviousNotConst->is(tok::kw_const);
@@ -2369,8 +2370,9 @@ private:
     // case, the matching `{` is on the same unwrapped line, so check for the
     // presence of the matching brace to distinguish between those.
     if (PrevToken->is(tok::r_brace) && Tok.is(tok::star) &&
-        !PrevToken->MatchingParen)
+        !PrevToken->MatchingParen) {
       return TT_PointerOrReference;
+    }
 
     if (PrevToken->endsSequence(tok::r_square, tok::l_square, tok::kw_delete))
       return TT_UnaryOperator;
@@ -4401,18 +4403,22 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
     // }
     if (Left.is(TT_DictLiteral) && Left.is(tok::l_brace))
       return true;
-    // Always break after a JSON array opener.
-    // [
-    // ]
-    if (Left.is(TT_ArrayInitializerLSquare) && Left.is(tok::l_square) &&
-        !Right.is(tok::r_square)) {
-      return true;
+    // Always break after a JSON array opener based on BreakArrays.
+    if ((Left.is(TT_ArrayInitializerLSquare) && Left.is(tok::l_square) &&
+         Right.isNot(tok::r_square)) ||
+        Left.is(tok::comma)) {
+      if (Right.is(tok::l_brace))
+        return true;
+      // scan to the right if an we see an object or an array inside
+      // then break.
+      for (const auto *Tok = &Right; Tok; Tok = Tok->Next) {
+        if (Tok->isOneOf(tok::l_brace, tok::l_square))
+          return true;
+        if (Tok->isOneOf(tok::r_brace, tok::r_square))
+          break;
+      }
+      return Style.BreakArrays;
     }
-    // Always break after successive entries.
-    // 1,
-    // 2
-    if (Left.is(tok::comma))
-      return true;
   }
 
   // If the last token before a '}', ']', or ')' is a comma or a trailing
